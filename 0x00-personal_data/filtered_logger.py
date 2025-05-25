@@ -13,7 +13,8 @@ PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
 
 def filter_datum(
-    fields: List[str], redaction: str, message: str, separator: str) -> str:
+        fields: List[str], redaction: str,
+        message: str, separator: str) -> str:
     """
     Obfuscates specified fields in a log message.
 
@@ -60,7 +61,8 @@ class RedactingFormatter(logging.Formatter):
             The formatted and obfuscated log message.
         """
         original = super().format(record)
-        return filter_datum(self.fields, self.REDACTION, original, self.SEPARATOR)
+        return filter_datum(
+            self.fields, self.REDACTION, original, self.SEPARATOR)
 
 
 def get_logger() -> logging.Logger:
@@ -103,7 +105,9 @@ def main():
     cursor.execute("SELECT * FROM users;")
     logger = get_logger()
     for row in cursor:
-        message = "; ".join(f"{desc[0]}={str(val)}" for desc, val in zip(cursor.description, row)) + ";"
+        message = "; ".join(
+            f"{desc[0]}={str(val)}"
+            for desc, val in zip(cursor.description, row)) + ";"
         logger.info(message)
     cursor.close()
     db.close()

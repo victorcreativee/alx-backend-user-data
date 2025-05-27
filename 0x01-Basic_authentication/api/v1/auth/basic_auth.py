@@ -13,7 +13,10 @@ class BasicAuth(Auth):
         self, authorization_header: str
     ) -> str:
         """Extracts base64 part from header"""
-        if not authorization_header or not isinstance(authorization_header, str):
+        if (
+            not authorization_header
+            or not isinstance(authorization_header, str)
+         ):
             return None
         if not authorization_header.startswith("Basic "):
             return None

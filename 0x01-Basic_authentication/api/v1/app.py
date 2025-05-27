@@ -2,15 +2,13 @@
 """API entry point with error handlers and request filter"""
 from flask import Flask, jsonify, abort, request
 from flask_cors import CORS
-from api.v1.views import app_views, index
+from api.v1.views import index
 
 import os
 
 
 app = Flask(__name__)
 CORS(app)
-
-app.register_blueprint(app_views)
 
 # Authentication instance
 auth = None
@@ -39,8 +37,7 @@ def before_request():
     """Filter each request before processing"""
     if auth is None:
         return
-    excluded = ['/api/v1/status/',
-                '/api/v1/unauthorized/', '/api/v1/forbidden/']
+    excluded = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
     if not auth.require_auth(request.path, excluded):
         return
     if auth.authorization_header(request) is None:

@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
-"""
-Route module for the API
-"""
-from os import getenv
-from api.v1.views import app_views
+"""API entry point with error handlers and request filter"""
 from flask import Flask, jsonify, abort, request
-from flask_cors import (CORS, cross_origin)
+from flask_cors import CORS
+from api.v1.views import app_views, index
+
 import os
 
 
 app = Flask(__name__)
+CORS(app)
+
 app.register_blueprint(app_views)
-CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
 # Authentication instance
 auth = None
@@ -22,22 +21,26 @@ elif os.getenv("AUTH_TYPE") == "auth":
     from api.v1.auth.auth import Auth
     auth = Auth()
 
+
 @app.errorhandler(401)
 def unauthorized(error):
     """Handle 401 Unauthorized"""
     return jsonify({"error": "Unauthorized"}), 401
+
 
 @app.errorhandler(403)
 def forbidden(error):
     """Handle 403 Forbidden"""
     return jsonify({"error": "Forbidden"}), 403
 
+
 @app.before_request
 def before_request():
     """Filter each request before processing"""
     if auth is None:
         return
-    excluded = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
+    excluded = ['/api/v1/status/',
+                '/api/v1/unauthorized/', '/api/v1/forbidden/']
     if not auth.require_auth(request.path, excluded):
         return
     if auth.authorization_header(request) is None:
@@ -45,7 +48,6 @@ def before_request():
     if auth.current_user(request) is None:
         abort(403)
 
-from api.v1.views import index
 
 if __name__ == "__main__":
     host = os.getenv("API_HOST", "0.0.0.0")

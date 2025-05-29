@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """API entry point with error handlers and request filter"""
+
 from flask import Flask, jsonify, abort, request
 from flask_cors import CORS
 from api.v1.views import app_views
 from os import getenv
-
 from models import storage
 
 # Dynamically import the correct Auth class
@@ -51,6 +51,7 @@ def before_request():
     if (auth.authorization_header(request) is None and
             auth.session_cookie(request) is None):
         abort(401)
+
     request.current_user = auth.current_user(request)
     if request.current_user is None:
         abort(403)

@@ -9,6 +9,7 @@ User = TypeVar('User')
 class Auth:
     """Authentication class"""
 
+
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """Check if path requires auth"""
         if path is None or excluded_paths is None or excluded_paths == []:
@@ -20,12 +21,22 @@ class Auth:
                 return False
         return True
 
+
     def authorization_header(self, request=None) -> str:
         """Returns Authorization header"""
         if request is None or 'Authorization' not in request.headers:
             return None
         return request.headers['Authorization']
 
+
     def current_user(self, request=None) -> User:
         """Get current user (stub)"""
         return None
+
+
+    def session_cookie(self, request=None):
+            """Returns session cookie from request"""
+        if request is None:
+            return None
+        cookie_name = os.getenv("SESSION_NAME")
+        return request.cookies.get(cookie_name)

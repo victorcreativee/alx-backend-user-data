@@ -7,6 +7,7 @@ from api.v1.views import app_views
 from os import getenv
 from models import storage
 
+
 # Dynamically import the correct Auth class
 auth = None
 auth_type = getenv("AUTH_TYPE")

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Initialize storage"""
+"""Initialize models package and storage engine"""
+
 from models.engine.file_storage import FileStorage
 
 storage = FileStorage()
